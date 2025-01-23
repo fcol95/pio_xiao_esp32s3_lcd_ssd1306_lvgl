@@ -17,18 +17,16 @@
 
 static const char *LOG_TAG = "ui_example";
 
-#define CONFIG_LCD_ENABLE_DEBUG_LOG 1
+#define LVGL_LOCK_TIMEOUT_MS 1000U
+#define UI_TASK_PERIOD_MS    1000U
 
-#define LVGL_LOCK_TIMEOUT_MS        1000U
-#define UI_TASK_PERIOD_MS           1000U
+#define I2C_BUS_PORT         0
 
-#define I2C_BUS_PORT                0
-
-#define LCD_PIXEL_CLOCK_HZ          (400 * 1000)
-#define LCD_I2C_SDA_PIN_NUM         GPIO_NUM_5 // SDA pin for XIAO ESP32S3 with Grove Base Expansion Board LCD
-#define LCD_I2C_SCL_PIN_NUM         GPIO_NUM_6 // SCL pin for XIAO ESP32S3 with Grove Base Expansion Board LCD
-#define LCD_RESET_PIN_NUM           -1         // No LCD reset pin on XIAO Expansion Base Board -  -1 for unused
-#define LCD_I2C_HW_ADDR             0x3C
+#define LCD_PIXEL_CLOCK_HZ   (400 * 1000)
+#define LCD_I2C_SDA_PIN_NUM  GPIO_NUM_5 // SDA pin for XIAO ESP32S3 with Grove Base Expansion Board LCD
+#define LCD_I2C_SCL_PIN_NUM  GPIO_NUM_6 // SCL pin for XIAO ESP32S3 with Grove Base Expansion Board LCD
+#define LCD_RESET_PIN_NUM    -1         // No LCD reset pin on XIAO Expansion Base Board -  -1 for unused
+#define LCD_I2C_HW_ADDR      0x3C
 
 // The pixel number in horizontal and vertical
 #define SSD1306_LCD_H_RES 128
@@ -53,7 +51,7 @@ static esp_err_t example_lvgl_demo_ui(lv_display_t *disp)
     if (label == NULL) return ESP_FAIL;
     lv_label_set_long_mode(label, LV_LABEL_LONG_SCROLL_CIRCULAR); /* Circular scroll */
     lv_label_set_text(label, "Hello Espressif, Hello LVGL.");
-    lv_obj_set_width(label, lv_pct(1000));
+    lv_obj_set_width(label, SSD1306_LCD_H_RES);
     lv_obj_align(label, LV_ALIGN_TOP_MID, 0, 0);
     return ESP_OK;
 }
