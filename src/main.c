@@ -82,7 +82,7 @@ void app_main()
 
     // Tasks Init
     xTaskCreate(&blink_task, "blink_task", configMINIMAL_STACK_SIZE, NULL, 5, NULL);
-    if (modbus_server_ret == ESP_OK)
+    if (ui_ret == ESP_OK)
     {
         xTaskCreate(&ui_task, "ui_task", configMINIMAL_STACK_SIZE * 2, NULL, 5, NULL);
     }

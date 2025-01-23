@@ -15,7 +15,7 @@
 
 #include "lvgl.h"
 
-static const char *TAG = "ui_example";
+static const char *LOG_TAG = "ui_example";
 
 #define I2C_BUS_PORT        0
 
@@ -33,20 +33,27 @@ static const char *TAG = "ui_example";
 #define SSD1306_LCD_CMD_BITS   8
 #define SSD1306_LCD_PARAM_BITS 8
 
-static void example_lvgl_demo_ui(lv_disp_t *disp)
+static lv_display_t *s_disp = NULL;
+
+static esp_err_t example_lvgl_demo_ui(lv_display_t *disp)
 {
+    if (disp == NULL)
+    {
+        ESP_LOGE(LOG_TAG, "Display is NULL");
+        return ESP_FAIL;
+    }
     lv_obj_t *scr = lv_disp_get_scr_act(disp);
     lv_obj_t *label = lv_label_create(scr);
     lv_label_set_long_mode(label, LV_LABEL_LONG_SCROLL_CIRCULAR); /* Circular scroll */
     lv_label_set_text(label, "Hello Espressif, Hello LVGL.");
-    /* Size of the screen (if you use rotation 90 or 270, please set disp->driver->ver_res) */
-    lv_obj_set_width(label, disp->driver->hor_res);
+    lv_obj_set_width(label, SSD1306_LCD_H_RES);
     lv_obj_align(label, LV_ALIGN_TOP_MID, 0, 0);
+    return ESP_OK;
 }
 
 esp_err_t ui_init(void)
 {
-    ESP_LOGI(TAG, "Initialize I2C bus");
+    ESP_LOGI(LOG_TAG, "Initialize I2C bus");
     i2c_master_bus_handle_t i2c_bus = NULL;
     i2c_master_bus_config_t bus_config = {
         .clk_source = I2C_CLK_SRC_DEFAULT,
@@ -58,7 +65,7 @@ esp_err_t ui_init(void)
     };
     ESP_ERROR_CHECK(i2c_new_master_bus(&bus_config, &i2c_bus));
 
-    ESP_LOGI(TAG, "Install panel IO");
+    ESP_LOGI(LOG_TAG, "Install panel IO");
     esp_lcd_panel_io_handle_t     io_handle = NULL;
     esp_lcd_panel_io_i2c_config_t io_config = {
         .dev_addr = LCD_I2C_HW_ADDR,
@@ -70,7 +77,7 @@ esp_err_t ui_init(void)
     };
     ESP_ERROR_CHECK(esp_lcd_new_panel_io_i2c(i2c_bus, &io_config, &io_handle));
 
-    ESP_LOGI(TAG, "Install SSD1306 panel driver");
+    ESP_LOGI(LOG_TAG, "Install SSD1306 panel driver");
     esp_lcd_panel_handle_t     panel_handle = NULL;
     esp_lcd_panel_dev_config_t panel_config = {
         .bits_per_pixel = 1,
@@ -86,7 +93,7 @@ esp_err_t ui_init(void)
     ESP_ERROR_CHECK(esp_lcd_panel_init(panel_handle));
     ESP_ERROR_CHECK(esp_lcd_panel_disp_on_off(panel_handle, true));
 
-    ESP_LOGI(TAG, "Initialize LVGL");
+    ESP_LOGI(LOG_TAG, "Initialize LVGL");
     const lvgl_port_cfg_t lvgl_cfg = ESP_LVGL_PORT_INIT_CONFIG();
     lvgl_port_init(&lvgl_cfg);
 
@@ -102,21 +109,21 @@ esp_err_t ui_init(void)
                                                   .mirror_x = false,
                                                   .mirror_y = false,
                                               }};
-    lv_disp_t                    *disp = lvgl_port_add_disp(&disp_cfg);
+    s_disp = lvgl_port_add_disp(&disp_cfg);
 
     /* Rotation of the screen */
-    lv_disp_set_rotation(disp, LV_DISP_ROT_NONE);
+    lv_disp_set_rotation(s_disp, LV_DISPLAY_ROTATION_0);
 
     return ESP_OK;
 }
 
 void ui_task(void *pvParameter)
 {
-    ESP_LOGI(TAG, "Display LVGL Scroll Text");
+    ESP_LOGI(LOG_TAG, "Display LVGL Scroll Text");
     // Lock the mutex due to the LVGL APIs are not thread-safe
     if (lvgl_port_lock(0))
     {
-        example_lvgl_demo_ui(disp);
+        example_lvgl_demo_ui(s_disp);
         // Release the mutex
         lvgl_port_unlock();
     }
