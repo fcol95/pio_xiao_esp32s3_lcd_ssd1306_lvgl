@@ -20,8 +20,8 @@ static const char *LOG_TAG = "ui_example";
 #define I2C_BUS_PORT        0
 
 #define LCD_PIXEL_CLOCK_HZ  (400 * 1000)
-#define LCD_I2C_SDA_PIN_NUM GPIO_NUM_5 // SCL pin for XIAO ESP32S3
-#define LCD_I2C_SCL_PIN_NUM GPIO_NUM_6 // SCL pin for XIAO ESP32S3
+#define LCD_I2C_SDA_PIN_NUM GPIO_NUM_5 // SDA pin for XIAO ESP32S3 with Grove Base Expansion Board LCD
+#define LCD_I2C_SCL_PIN_NUM GPIO_NUM_6 // SCL pin for XIAO ESP32S3 with Grove Base Expansion Board LCD
 #define LCD_RESET_PIN_NUM   -1         // No LCD reset pin on XIAO Expansion Base Board
 #define LCD_I2C_HW_ADDR     0x3C
 
@@ -95,7 +95,7 @@ esp_err_t ui_init(void)
 
     ESP_LOGI(LOG_TAG, "Initialize LVGL");
     const lvgl_port_cfg_t lvgl_cfg = ESP_LVGL_PORT_INIT_CONFIG();
-    lvgl_port_init(&lvgl_cfg);
+    ESP_ERROR_CHECK(lvgl_port_init(&lvgl_cfg));
 
     const lvgl_port_display_cfg_t disp_cfg = {.io_handle = io_handle,
                                               .panel_handle = panel_handle,
@@ -112,7 +112,7 @@ esp_err_t ui_init(void)
     s_disp = lvgl_port_add_disp(&disp_cfg);
 
     /* Rotation of the screen */
-    lv_disp_set_rotation(s_disp, LV_DISPLAY_ROTATION_0);
+    lv_display_set_rotation(s_disp, LV_DISPLAY_ROTATION_0);
 
     return ESP_OK;
 }
