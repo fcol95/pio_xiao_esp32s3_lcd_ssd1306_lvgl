@@ -86,4 +86,8 @@ void app_main()
     {
         xTaskCreate(&ui_task, "ui_task", configMINIMAL_STACK_SIZE * 2, NULL, 5, NULL);
     }
+    else
+    {
+        ESP_LOGE(LOG_TAG, "UI initialization failed!");
+    }
 }

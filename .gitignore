@@ -3,7 +3,7 @@
 .vscode
 build
 compile_commands.json
-sdkconfig*
+sdkconfig*.old
 
 # ESPIDF
 managed_components
