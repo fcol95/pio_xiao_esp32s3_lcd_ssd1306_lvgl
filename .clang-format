@@ -1,0 +1,52 @@
+# Clang format - Will describe how we want the code to be formatted.
+
+---
+BasedOnStyle: Microsoft
+IndentWidth: 4
+TabWidth: 4
+ColumnLimit: 120
+UseTab: Never
+
+# Overall Alignment
+AlignOperands: Align
+AlignAfterOpenBracket: Align
+AllowAllArgumentsOnNextLine: false
+AlignConsecutiveAssignments: None
+AlignConsecutiveDeclarations: true
+BreakStringLiterals: true
+BreakBeforeBinaryOperators: true
+PenaltyBreakAssignment: 60
+
+# Comments
+AlignTrailingComments: true
+ReflowComments: true
+
+# Macro
+AlignConsecutiveMacros:
+  Enabled: true
+  AcrossEmptyLines: true
+  AcrossComments: false
+
+# Function
+AllowAllParametersOfDeclarationOnNextLine: false
+BinPackArguments: false
+BinPackParameters: false
+AllowShortFunctionsOnASingleLine: true
+IndentPPDirectives: BeforeHash
+
+# Control Statements (if and switch)
+AllowShortIfStatementsOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: true
+IndentCaseLabels: false
+IndentCaseBlocks: false
+
+# Braces
+BraceWrapping:
+  AfterCaseLabel: true
+
+# Struct and bitfields
+AlignConsecutiveBitFields: true
+
+# Spaces
+SpaceInEmptyBlock: true
+SpacesInContainerLiterals: true
