@@ -1,6 +1,8 @@
 # Platformio XIAO ESP32S3 LCD SSD1306 LVGL Exploration
 This exploration project is to test the integration of esp_lvgl_port on the XIAO ESP32S3 connected to a Grove Expansion Board Base for XIAO and its SSD1306 LCD screen.
 Need at least to configure LVGL to use the FreeRTOS port. Run menuconfig -> Component config -> LVGL configuration -> Operating System (OS) -> Default operating system to use (2: FreeRTOS).
+Other menuconfig setups:
+1. 8MB Flash (XIAO ESP32S3 is 8MB, not 2MB).
 
 # Seeed Xiao ESP32-S3 references:
 https://docs.platformio.org/en/latest//boards/espressif32/seeed_xiao_esp32s3.html
