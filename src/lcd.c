@@ -14,11 +14,12 @@
 #include "esp_lvgl_port.h"
 
 #include "lvgl.h"
+#include "ui.h" //< For EEZ Studio functions
 
 static const char *LOG_TAG = "lcd";
 
 #define LVGL_LOCK_TIMEOUT_MS 1000U
-#define UI_TASK_PERIOD_MS    1000U
+#define UI_TASK_PERIOD_MS    10U
 
 #define I2C_BUS_PORT         0
 
@@ -38,7 +39,8 @@ static const char *LOG_TAG = "lcd";
 
 static lv_display_t *s_disp = NULL;
 
-// NOTE: This is the example lvgl ui demo from espressif
+// NOTE: This is the old example lvgl demo from espressif before integrating EEZ studio
+/*
 static esp_err_t example_lvgl_demo_ui(lv_display_t *disp)
 {
     ESP_LOGI(LOG_TAG, "Display LVGL Scroll Text");
@@ -80,7 +82,29 @@ static esp_err_t example_lvgl_demo_ui(lv_display_t *disp)
 
     return ESP_OK;
 }
+*/
 
+// NOTE: Getter/Setter for EEZ Studio functions
+static int32_t           s_connected_led_state = 0;
+static SemaphoreHandle_t s_connected_led_state_mutex = NULL;
+
+int32_t get_var_connected_led_state()
+{
+    if (s_connected_led_state_mutex == NULL) return 0;
+    xSemaphoreTake(s_connected_led_state_mutex, portMAX_DELAY);
+    int32_t value = s_connected_led_state;
+    xSemaphoreGive(s_connected_led_state_mutex);
+    return value;
+}
+void set_var_connected_led_state(int32_t value)
+{
+    if (s_connected_led_state_mutex == NULL) return;
+    xSemaphoreTake(s_connected_led_state_mutex, portMAX_DELAY);
+    s_connected_led_state = value;
+    xSemaphoreGive(s_connected_led_state_mutex);
+}
+
+// LCD I2C Variables
 static i2c_master_bus_handle_t       s_i2c_bus = NULL;
 static const i2c_master_bus_config_t s_i2c_bus_config = {
     .clk_source = I2C_CLK_SRC_DEFAULT,
@@ -160,14 +184,49 @@ esp_err_t lcd_init(void)
     /* Rotation of the screen */
     lv_display_set_rotation(s_disp, LV_DISPLAY_ROTATION_0);
 
+    // Init EEZ UI
+    s_connected_led_state_mutex = xSemaphoreCreateMutex();
+    if (s_connected_led_state_mutex == NULL) return ESP_FAIL;
+
+    // Lock the mutex due to the LVGL APIs are not thread-safe
+    if (!!!lvgl_port_lock(LVGL_LOCK_TIMEOUT_MS))
+    {
+        ESP_LOGE(LOG_TAG, "Failed to lock LVGL mutex!");
+        return ESP_FAIL;
+    }
+    ui_init();
+    lvgl_port_unlock(); // Release the mutex
+
     return ESP_OK;
 }
 
 void lcd_task(void *pvParameter)
 {
-    example_lvgl_demo_ui(s_disp);
+    // NOTE: This is the old example lvgl demo from espressif before integrating EEZ studio
+    // example_lvgl_demo_ui(s_disp);
     while (1)
     {
+        // Lock the mutex due to the LVGL APIs are not thread-safe
+        if (!!!lvgl_port_lock(LVGL_LOCK_TIMEOUT_MS))
+        {
+            ESP_LOGE(LOG_TAG, "Failed to lock LVGL mutex!");
+        }
+        else
+        {
+            ui_tick();
+            lvgl_port_unlock(); // Release the mutex
+        }
+
+        // NOTE: This is an example of an EEZ Studio simple screen, toggle the variable here shpould toggle the onscreen
+        // "LED"
+        static TickType_t last_toggle_time = 0;
+        TickType_t        current_time = xTaskGetTickCount();
+        if ((current_time - last_toggle_time) >= pdMS_TO_TICKS(1000))
+        {
+            int32_t current_state = get_var_connected_led_state();
+            set_var_connected_led_state(!current_state);
+            last_toggle_time = current_time;
+        }
         vTaskDelay(pdMS_TO_TICKS(UI_TASK_PERIOD_MS));
     }
     ESP_ERROR_CHECK(lvgl_port_remove_disp(s_disp));
