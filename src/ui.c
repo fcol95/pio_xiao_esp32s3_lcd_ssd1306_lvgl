@@ -118,6 +118,7 @@ esp_err_t ui_init(void)
                                                            .hres = SSD1306_LCD_H_RES,
                                                            .vres = SSD1306_LCD_V_RES,
                                                            .monochrome = true,
+                                                            /* Rotation values must be same as used in esp_lcd for initial settings of the screen */
                                                            .rotation = {
                                                                .swap_xy = false,
                                                                .mirror_x = false,
@@ -126,7 +127,7 @@ esp_err_t ui_init(void)
                                                            .flags = 
                                                            {
                                                             .sw_rotate = true,
-                                                           }
+                                                           },
                                                            };
     s_disp = lvgl_port_add_disp(&lvgl_port_display_cfg);
     if (s_disp == NULL) return ESP_FAIL;
