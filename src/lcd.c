@@ -194,6 +194,8 @@ esp_err_t lcd_init(void)
         ESP_LOGE(LOG_TAG, "Failed to lock LVGL mutex!");
         return ESP_FAIL;
     }
+    esp_lcd_panel_invert_color(s_lcd_panel_handle,
+                               true); // Invert colors to fit with EEZ Studio visual
     ui_init();
     lvgl_port_unlock(); // Release the mutex
 
