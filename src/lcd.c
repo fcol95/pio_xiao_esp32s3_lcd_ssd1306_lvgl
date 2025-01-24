@@ -38,7 +38,7 @@ static const char *LOG_TAG = "lcd";
 
 static lv_display_t *s_disp = NULL;
 
-// NOTE: This is the old example lvgl demo from espressif before integrating EEZ studio
+// NOTE: This is the example lvgl ui demo from espressif
 static esp_err_t example_lvgl_demo_ui(lv_display_t *disp)
 {
     ESP_LOGI(LOG_TAG, "Display LVGL Scroll Text");
