@@ -4,6 +4,10 @@ Need at least to configure LVGL to use the FreeRTOS port. Run menuconfig -> Comp
 Other menuconfig setups:
 1. 8MB Flash (XIAO ESP32S3 is 8MB, not 2MB).
 
+This project is also using EEZ Studio and framework to configure the UI and allow for state flow logic to be implemented in it.
+This is the example project made to demonstrate an example project configuring the display with a sample flow logic to toggle the corner "led" object:
+![EEZ Studio Project](doc/EEZ_Studio_Project.png.png)
+
 # Seeed Xiao ESP32-S3 references:
 https://docs.platformio.org/en/latest//boards/espressif32/seeed_xiao_esp32s3.html
 https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/
@@ -25,3 +29,7 @@ https://components.espressif.com/components/espressif/esp_lvgl_port/versions/2.4
 https://lvgl.io/
 https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/lcd/index.html
 https://github.com/espressif/esp-idf/tree/v5.4/examples/peripherals/lcd/i2c_oled
+
+# EEZ Studio References:
+https://www.envox.eu/studio/studio-introduction/
+https://github.com/eez-open/studio/releases
