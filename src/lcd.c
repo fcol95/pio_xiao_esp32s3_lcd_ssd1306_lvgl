@@ -1,4 +1,4 @@
-#include "ui.h"
+#include "lcd.h"
 
 #include <stdio.h>
 
@@ -15,7 +15,7 @@
 
 #include "lvgl.h"
 
-static const char *LOG_TAG = "ui_example";
+static const char *LOG_TAG = "lcd";
 
 #define LVGL_LOCK_TIMEOUT_MS 1000U
 #define UI_TASK_PERIOD_MS    1000U
@@ -38,21 +38,46 @@ static const char *LOG_TAG = "ui_example";
 
 static lv_display_t *s_disp = NULL;
 
+// NOTE: This is the old example lvgl demo from espressif before integrating EEZ studio
 static esp_err_t example_lvgl_demo_ui(lv_display_t *disp)
 {
+    ESP_LOGI(LOG_TAG, "Display LVGL Scroll Text");
+
     if (disp == NULL)
     {
-        ESP_LOGE(LOG_TAG, "Display is NULL");
+        ESP_LOGE(LOG_TAG, "Display is NULL!");
+        return ESP_FAIL;
+    }
+
+    // Lock the mutex due to the LVGL APIs are not thread-safe
+    if (!!!lvgl_port_lock(LVGL_LOCK_TIMEOUT_MS))
+    {
+        ESP_LOGE(LOG_TAG, "Failed to lock LVGL mutex!");
         return ESP_FAIL;
     }
     lv_obj_t *scr = lv_display_get_screen_active(disp);
-    if (scr == NULL) return ESP_FAIL;
+    if (scr == NULL)
+    {
+        ESP_LOGE(LOG_TAG, "Failed to get LVGL active screen!");
+        lvgl_port_unlock(); // Release the mutex
+        return ESP_FAIL;
+    }
     lv_obj_t *label = lv_label_create(scr);
-    if (label == NULL) return ESP_FAIL;
-    lv_label_set_long_mode(label, LV_LABEL_LONG_SCROLL_CIRCULAR); /* Circular scroll */
+    if (label == NULL)
+    {
+        ESP_LOGE(LOG_TAG, "Failed to create LVGL label!");
+
+        lvgl_port_unlock(); // Release the mutex
+        return ESP_FAIL;
+    }
+
+    lv_label_set_long_mode(label, LV_LABEL_LONG_SCROLL_CIRCULAR);
     lv_label_set_text(label, "Hello Espressif, Hello LVGL.");
     lv_obj_set_width(label, SSD1306_LCD_H_RES);
     lv_obj_align(label, LV_ALIGN_TOP_MID, 0, 0);
+
+    lvgl_port_unlock(); // Release the mutex
+
     return ESP_OK;
 }
 
@@ -89,7 +114,7 @@ static const esp_lcd_panel_dev_config_t s_panel_config = {
 
 static const lvgl_port_cfg_t s_lvgl_port_cfg = ESP_LVGL_PORT_INIT_CONFIG();
 
-esp_err_t ui_init(void)
+esp_err_t lcd_init(void)
 {
     ESP_LOGI(LOG_TAG, "Initialize I2C bus");
     ESP_ERROR_CHECK(i2c_new_master_bus(&s_i2c_bus_config, &s_i2c_bus));
@@ -138,20 +163,9 @@ esp_err_t ui_init(void)
     return ESP_OK;
 }
 
-void ui_task(void *pvParameter)
+void lcd_task(void *pvParameter)
 {
-    ESP_LOGI(LOG_TAG, "Display LVGL Scroll Text");
-    // Lock the mutex due to the LVGL APIs are not thread-safe
-    if (lvgl_port_lock(LVGL_LOCK_TIMEOUT_MS))
-    {
-        example_lvgl_demo_ui(s_disp);
-        // Release the mutex
-        lvgl_port_unlock();
-    }
-    else
-    {
-        ESP_LOGE(LOG_TAG, "Failed to lock LVGL mutex");
-    }
+    example_lvgl_demo_ui(s_disp);
     while (1)
     {
         vTaskDelay(pdMS_TO_TICKS(UI_TASK_PERIOD_MS));

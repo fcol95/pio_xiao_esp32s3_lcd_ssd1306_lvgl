@@ -11,7 +11,7 @@
 #include "esp_flash.h"
 #include "esp_log.h"
 
-#include "ui.h"
+#include "lcd.h"
 
 static const char *LOG_TAG = "main";
 
@@ -78,13 +78,13 @@ void app_main()
     ESP_LOGI(LOG_TAG, "Starting program...");
 
     // Drivers Init
-    esp_err_t ui_ret = ui_init();
+    esp_err_t lcd_ret = lcd_init();
 
     // Tasks Init
     xTaskCreate(&blink_task, "blink_task", configMINIMAL_STACK_SIZE, NULL, 5, NULL);
-    if (ui_ret == ESP_OK)
+    if (lcd_ret == ESP_OK)
     {
-        xTaskCreate(&ui_task, "ui_task", configMINIMAL_STACK_SIZE * 4, NULL, 4, NULL);
+        xTaskCreate(&lcd_task, "lcd_task", configMINIMAL_STACK_SIZE * 4, NULL, 4, NULL);
     }
     else
     {
