@@ -202,7 +202,7 @@
             {
               "type": "tabset",
               "id": "EDITORS",
-              "weight": 56.333439287984746,
+              "weight": 56.51167031363968,
               "selected": 1,
               "enableDeleteWhenEmpty": false,
               "enableClose": false,
@@ -236,7 +236,7 @@
             {
               "type": "row",
               "id": "#64f93ea4-426f-4a67-b34e-be2ea1d47d71",
-              "weight": 28.666560712015258,
+              "weight": 28.48832968636032,
               "children": [
                 {
                   "type": "tabset",
@@ -1037,8 +1037,8 @@
       },
       "transform": {
         "translate": {
-          "x": -48.75555555555553,
-          "y": 56.81666666666666
+          "x": -9.755555555555532,
+          "y": 88.81666666666666
         },
         "scale": 1
       },
