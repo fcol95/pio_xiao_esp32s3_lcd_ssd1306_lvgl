@@ -74,6 +74,8 @@
           },
           {
             "type": "border",
+            "selected": 0,
+            "size": 202.5,
             "location": "bottom",
             "children": [
               {
@@ -1029,14 +1031,14 @@
       "selection": {
         "0": {
           "0": {
-            "0": {}
+            "1": {}
           }
         }
       },
       "transform": {
         "translate": {
-          "x": 8.732500000000002,
-          "y": 58
+          "x": -48.75555555555553,
+          "y": 56.81666666666666
         },
         "scale": 1
       },
@@ -1067,7 +1069,15 @@
   "selectedStylePropertyName": "",
   "lvglPart": "MAIN",
   "lvglState": "DEFAULT",
-  "lvglExpandedPropertiesGroup": [],
+  "lvglExpandedPropertiesGroup": [
+    "BACKGROUND",
+    "PADDING",
+    "LAYOUT",
+    "POSITION AND SIZE",
+    "MISCELLANEOUS",
+    "MARGIN",
+    "BORDER"
+  ],
   "showInactiveFlowsInDebugger": true,
   "globalFlowZoom": true,
   "flowZoom": 1,
