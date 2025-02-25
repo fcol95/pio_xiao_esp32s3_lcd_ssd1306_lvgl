@@ -33,3 +33,6 @@ https://github.com/espressif/esp-idf/tree/v5.4/examples/peripherals/lcd/i2c_oled
 # EEZ Studio References:
 https://www.envox.eu/studio/studio-introduction/
 https://github.com/eez-open/studio/releases
+
+## Buy me a coffee ☕ (or a beer 🍺)
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/fcol95)
